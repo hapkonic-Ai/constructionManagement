@@ -11,7 +11,7 @@ export default async function CDOPage() {
   const session = await auth();
   if (!session?.user) redirect('/login');
 
-  const [designs, projects] = await Promise.all([
+  const [designs, projects]: [any[], any[]] = await Promise.all([
     prisma.design.findMany({
       orderBy: [{ projectId: 'asc' }, { order: 'asc' }],
       include: {
