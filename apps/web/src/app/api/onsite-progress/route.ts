@@ -30,10 +30,10 @@ export async function GET() {
     },
   });
 
-  const shaped = projects.map((project) => {
+  const shaped = projects.map((project: any) => {
     const taskCount = project.ganttTasks.length;
     const avgTaskProgress = taskCount > 0
-      ? Math.round(project.ganttTasks.reduce((sum, task) => sum + task.progress, 0) / taskCount)
+      ? Math.round(project.ganttTasks.reduce((sum: number, task: any) => sum + task.progress, 0) / taskCount)
       : 0;
     return {
       id: project.id,
