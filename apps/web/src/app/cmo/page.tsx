@@ -10,7 +10,7 @@ export default async function CMOPage() {
   const session = await auth();
   if (!session?.user) redirect('/login');
 
-  const [materials, labourCosts, projects] = await Promise.all([
+  const [materials, labourCosts, projects]: [any[], any[], any[]] = await Promise.all([
     prisma.material.findMany({
       orderBy: { totalCost: 'desc' },
       take: 12,
@@ -27,8 +27,8 @@ export default async function CMOPage() {
     }),
   ]);
 
-  const totalMaterialCost = materials.reduce((sum, material) => sum + material.totalCost, 0);
-  const totalLabourEstimate = labourCosts.reduce((sum, cost) => sum + cost.estimatedCost, 0);
+  const totalMaterialCost = materials.reduce((sum: number, material: any) => sum + material.totalCost, 0);
+  const totalLabourEstimate = labourCosts.reduce((sum: number, cost: any) => sum + cost.estimatedCost, 0);
 
   return (
     <div className="space-y-8">

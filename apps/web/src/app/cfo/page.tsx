@@ -10,7 +10,7 @@ export default async function CFOPage() {
   const session = await auth();
   if (!session?.user) redirect('/login');
 
-  const [budgets, deviations, projects] = await Promise.all([
+  const [budgets, deviations, projects]: [any[], any[], any[]] = await Promise.all([
     prisma.budgetAllocation.findMany({
       orderBy: { updatedAt: 'desc' },
       include: { project: { select: { id: true, title: true } } },
@@ -27,15 +27,15 @@ export default async function CFOPage() {
     }),
   ]);
 
-  const totalAllocated = budgets.reduce((sum, item) => sum + item.allocated, 0);
-  const totalSpent = budgets.reduce((sum, item) => sum + item.spent, 0);
+  const totalAllocated = budgets.reduce((sum: number, item: any) => sum + item.allocated, 0);
+  const totalSpent = budgets.reduce((sum: number, item: any) => sum + item.spent, 0);
   const utilization = totalAllocated > 0 ? Math.round((totalSpent / totalAllocated) * 100) : 0;
-  const pendingCostDeviations = deviations.filter((item) => !item.approvedAt).length;
+  const pendingCostDeviations = deviations.filter((item: any) => !item.approvedAt).length;
 
-  const budgetByProject = projects.map((project) => {
-    const projectBudgets = budgets.filter((budget) => budget.projectId === project.id);
-    const allocated = projectBudgets.reduce((sum, item) => sum + item.allocated, 0);
-    const spent = projectBudgets.reduce((sum, item) => sum + item.spent, 0);
+  const budgetByProject = projects.map((project: any) => {
+    const projectBudgets = budgets.filter((budget: any) => budget.projectId === project.id);
+    const allocated = projectBudgets.reduce((sum: number, item: any) => sum + item.allocated, 0);
+    const spent = projectBudgets.reduce((sum: number, item: any) => sum + item.spent, 0);
     return { projectTitle: project.title, allocated, spent };
   });
 

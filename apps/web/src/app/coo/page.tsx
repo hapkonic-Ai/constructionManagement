@@ -12,7 +12,7 @@ export default async function COOPage() {
 
   const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
 
-  const [projects, updates, deviations] = await Promise.all([
+  const [projects, updates, deviations]: [any[], any[], any[]] = await Promise.all([
     prisma.project.findMany({
       orderBy: { createdAt: 'desc' },
       select: { id: true, title: true, status: true },
@@ -35,9 +35,9 @@ export default async function COOPage() {
     }),
   ]);
 
-  const weeklyUpdates = updates.filter((item) => item.createdAt >= weekAgo).length;
-  const pendingDeviations = deviations.filter((item) => !item.approvedAt).length;
-  const approvedDeviations = deviations.filter((item) => !!item.approvedAt).length;
+  const weeklyUpdates = updates.filter((item: any) => item.createdAt >= weekAgo).length;
+  const pendingDeviations = deviations.filter((item: any) => !item.approvedAt).length;
+  const approvedDeviations = deviations.filter((item: any) => !!item.approvedAt).length;
 
   return (
     <div className="space-y-8">

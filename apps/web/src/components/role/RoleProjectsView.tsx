@@ -12,7 +12,7 @@ export default async function RoleProjectsView({
   roleLabel: string;
   routeBase: string;
 }) {
-  const projects = await prisma.project.findMany({
+  const projects: any[] = await prisma.project.findMany({
     orderBy: { createdAt: 'desc' },
     include: {
       ceo: { select: { name: true } },
@@ -38,9 +38,9 @@ export default async function RoleProjectsView({
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-        {projects.map((project) => {
-          const allocated = project.budgets.reduce((sum, item) => sum + item.allocated, 0);
-          const spent = project.budgets.reduce((sum, item) => sum + item.spent, 0);
+        {projects.map((project: any) => {
+          const allocated = project.budgets.reduce((sum: number, item: any) => sum + item.allocated, 0);
+          const spent = project.budgets.reduce((sum: number, item: any) => sum + item.spent, 0);
           const utilization = allocated > 0 ? Math.round((spent / allocated) * 100) : 0;
           return (
             <Link

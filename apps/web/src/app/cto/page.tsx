@@ -10,7 +10,7 @@ export default async function CTOPage() {
   const session = await auth();
   if (!session?.user) redirect('/login');
 
-  const [projects, tasks, designs] = await Promise.all([
+  const [projects, tasks, designs]: [any[], any[], any[]] = await Promise.all([
     prisma.project.findMany({
       orderBy: { createdAt: 'desc' },
       select: {
@@ -34,8 +34,8 @@ export default async function CTOPage() {
   ]);
 
   const totalTasks = tasks.length;
-  const completedTasks = tasks.filter((task) => task.progress >= 100).length;
-  const delayedProjects = projects.filter((project) => project.status.toUpperCase().includes('DELAY')).length;
+  const completedTasks = tasks.filter((task: any) => task.progress >= 100).length;
+  const delayedProjects = projects.filter((project: any) => project.status.toUpperCase().includes('DELAY')).length;
 
   return (
     <div className="space-y-8">
