@@ -1,0 +1,237 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  SA
+  CEO
+  CTO
+  CDO
+  COO
+  CMO
+  CFO
+}
+
+enum RequirementStatus {
+  SUBMITTED
+  APPROVED
+  REJECTED
+}
+
+model User {
+  id              String           @id @default(cuid())
+  name            String
+  email           String           @unique
+  password        String
+  role            Role
+  avatarUrl       String?
+  bio             String?
+  contact         String?
+  createdAt       DateTime         @default(now())
+  projectsAsCeo   Project[]        @relation("ProjectCeo")
+  projectMembers  ProjectMember[]
+  designsCreated  Design[]
+  progressUpdates ProgressUpdate[]
+  deviations      Deviation[]      @relation("UserDeviations")
+  budgets         BudgetAllocation[]
+  auditLogs       AuditLog[]
+  passwordResets  PasswordResetToken[]
+  notifications   Notification[]
+  requirementRequests RequirementRequest[] @relation("RequirementRequestAuthor")
+  requirementsReviewed RequirementRequest[] @relation("RequirementRequestReviewer")
+}
+
+model Project {
+  id              String           @id @default(cuid())
+  title           String
+  location        String?
+  description     String?
+  status          String           @default("ACTIVE")
+  ceoId           String
+  ceo             User             @relation("ProjectCeo", fields: [ceoId], references: [id])
+  createdAt       DateTime         @default(now())
+  members         ProjectMember[]
+  designs         Design[]
+  materials       Material[]
+  labourCosts     LabourCost[]
+  progressUpdates ProgressUpdate[]
+  deviations      Deviation[]      @relation("ProjectDeviations")
+  budgets         BudgetAllocation[]
+  ganttTasks      GanttTask[]
+  requirementRequests RequirementRequest[]
+}
+
+model ProjectMember {
+  id        String  @id @default(cuid())
+  projectId String
+  userId    String
+  role      Role
+  project   Project @relation(fields: [projectId], references: [id])
+  user      User    @relation(fields: [userId], references: [id])
+
+  @@unique([projectId, userId])
+}
+
+model Design {
+  id         String       @id @default(cuid())
+  projectId  String
+  creatorId  String
+  title      String
+  status     String       @default("DRAFT") // "DRAFT", "READY", "RELEASED", "ACKNOWLEDGED"
+  order      Int
+  plannedStartAt DateTime?
+  plannedEndAt   DateTime?
+  releasedAt DateTime?
+  project    Project      @relation(fields: [projectId], references: [id])
+  creator    User         @relation(fields: [creatorId], references: [id])
+  timeline   DesignTimeline?
+}
+
+model DesignTimeline {
+  id            String   @id @default(cuid())
+  designId      String   @unique
+  milestones    Json
+  estimatedDays Int
+  design        Design   @relation(fields: [designId], references: [id])
+}
+
+model Material {
+  id        String  @id @default(cuid())
+  projectId String
+  name      String
+  quantity  Float
+  unitCost  Float
+  totalCost Float
+  cmOId     String
+  project   Project @relation(fields: [projectId], references: [id])
+}
+
+model LabourCost {
+  id            String  @id @default(cuid())
+  projectId     String
+  category      String
+  estimatedCost Float
+  cmOId         String
+  project   Project @relation(fields: [projectId], references: [id])
+}
+
+model ProgressUpdate {
+  id          String   @id @default(cuid())
+  projectId   String
+  cooId       String
+  note        String
+  attachments Json
+  createdAt   DateTime @default(now())
+  project     Project  @relation(fields: [projectId], references: [id])
+  coo         User     @relation(fields: [cooId], references: [id])
+}
+
+model Deviation {
+  id         String        @id @default(cuid())
+  projectId  String
+  cooId      String
+  type       String        // "TIMELINE", "COST"
+  delta      Float
+  reason     String
+  approvedAt DateTime?
+  project    Project       @relation("ProjectDeviations", fields: [projectId], references: [id])
+  coo        User          @relation("UserDeviations", fields: [cooId], references: [id])
+}
+
+model BudgetAllocation {
+  id        String   @id @default(cuid())
+  projectId String
+  cfOId     String
+  allocated Float
+  spent     Float    @default(0)
+  updatedAt DateTime @updatedAt
+  project   Project  @relation(fields: [projectId], references: [id])
+  cfo       User     @relation(fields: [cfOId], references: [id])
+}
+
+model GanttTask {
+  id         String   @id @default(cuid())
+  projectId  String
+  title      String
+  startDate  DateTime
+  endDate    DateTime
+  progress   Float    @default(0)
+  assignedTo String?
+  parentId   String?
+  project    Project  @relation(fields: [projectId], references: [id])
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  actorId   String
+  action    String
+  entity    String
+  entityId  String
+  metadata  Json?
+  createdAt DateTime @default(now())
+  actor     User     @relation(fields: [actorId], references: [id])
+}
+
+model Feature {
+  id          String        @id @default(cuid())
+  name        String
+  code        String        @unique
+  roleFeatures RoleFeature[]
+}
+
+model RoleFeature {
+  id          String  @id @default(cuid())
+  roleCode    String
+  featureCode String
+  enabled     Boolean @default(false)
+  feature     Feature @relation(fields: [featureCode], references: [code])
+
+  @@unique([roleCode, featureCode])
+}
+
+model PasswordResetToken {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  userId    String
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  title     String
+  body      String
+  readAt    DateTime?
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model RequirementRequest {
+  id               String            @id @default(cuid())
+  projectId         String
+  cmoId             String
+  summary           String
+  notes             String?
+  additionalCost    Float             @default(0)
+  totalMaterialCost Float
+  totalLabourCost   Float
+  requestedAmount   Float
+  status            RequirementStatus @default(SUBMITTED)
+  reviewNote        String?
+  approvedById      String?
+  approvedAt        DateTime?
+  rejectedAt        DateTime?
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+  project           Project           @relation(fields: [projectId], references: [id])
+  cmo               User              @relation("RequirementRequestAuthor", fields: [cmoId], references: [id])
+  approvedBy        User?             @relation("RequirementRequestReviewer", fields: [approvedById], references: [id])
+}
