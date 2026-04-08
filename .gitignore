@@ -1,0 +1,31 @@
+# dependencies
+node_modules/
+**/node_modules/
+
+# build outputs
+.next/
+**/.next/
+dist/
+**/dist/
+.turbo/
+coverage/
+
+# env and local secrets
+.env
+.env.*
+!.env.example
+apps/web/.env
+packages/db/.env
+
+# prisma local db
+packages/db/prisma/dev.db
+
+# logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# OS/editor
+.DS_Store
+.vscode/
