@@ -83,7 +83,7 @@ export async function PATCH(req: Request) {
   const parsed = updateDesignSchema.safeParse(payload);
   if (!parsed.success) return fail(parsed.error.issues[0]?.message ?? 'Invalid payload', 422);
 
-  const updated = await prisma.$transaction(async (tx) => {
+  const updated = await prisma.$transaction(async (tx: any) => {
     await tx.design.update({
       where: { id: parsed.data.id },
       data: {
