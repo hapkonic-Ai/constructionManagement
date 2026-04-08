@@ -100,7 +100,7 @@ export async function PATCH(req: Request) {
   });
   if (!requirement) return fail('Requirement not found', 404);
 
-  const updated = await prisma.$transaction(async (tx) => {
+  const updated = await prisma.$transaction(async (tx: any) => {
     const requirementUpdate = await tx.requirementRequest.update({
       where: { id: parsed.data.id },
       data: {
