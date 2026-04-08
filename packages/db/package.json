@@ -7,7 +7,7 @@
     "db:generate": "prisma generate",
     "db:push": "prisma db push",
     "db:studio": "prisma studio",
-    "build": "prisma generate && tsc",
+    "build": "NODE_PATH=../../node_modules prisma generate && tsc",
     "dev": "tsc -w"
   },
   "dependencies": {
