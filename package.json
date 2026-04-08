@@ -11,9 +11,11 @@
     "build": "turbo run build",
     "dev": "turbo run dev",
     "lint": "turbo run lint",
+    "db:generate": "prisma generate --schema=packages/db/prisma/schema.prisma",
     "format": "prettier --write \"**/*.{ts,tsx,md}\""
   },
   "devDependencies": {
+    "prisma": "6.2.1",
     "prettier": "latest",
     "turbo": "latest"
   },

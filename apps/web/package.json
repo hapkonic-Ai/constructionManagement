@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "cd ../.. && npm run db:generate --workspace @nexus/db && cd apps/web && next build",
+    "build": "cd ../.. && npm run db:generate && cd apps/web && next build",
     "start": "next start",
     "lint": "eslint"
   },

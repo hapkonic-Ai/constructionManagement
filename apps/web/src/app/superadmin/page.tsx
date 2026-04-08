@@ -5,6 +5,8 @@ import { auth, signOut } from '@/lib/auth';
 import { createPlatformUser, toggleRoleFeature } from '@/app/actions/superadmin';
 import ThemeToggle from '@/components/ui/ThemeToggle';
 
+export const dynamic = 'force-dynamic';
+
 const ROLES = ['SA', 'CEO', 'CTO', 'CDO', 'COO', 'CMO', 'CFO'] as const;
 type UserRow = { id: string; name: string; email: string; role: string; createdAt: Date };
 type FeatureRow = { id: string; name: string; code: string };

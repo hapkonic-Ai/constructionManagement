@@ -4,6 +4,8 @@ import { prisma } from '@nexus/db';
 import { auth } from '@/lib/auth';
 import ProfileEditor from '@/components/profile/ProfileEditor';
 
+export const dynamic = 'force-dynamic';
+
 export default async function ProfilePage({ params }: { params: Promise<{ userId: string }> }) {
   const session = await auth();
   const sessionUser = session?.user as { id?: string; role?: string } | undefined;
