@@ -64,7 +64,7 @@ async function main() {
   const allFeatures = await prisma.feature.findMany();
   const roleFeatureAccess: Record<RoleCode, string[]> = {
     SA: allFeatures.map((f) => f.code),
-    CEO: ['DASHBOARD', 'PROJECT_CREATE', 'FINANCE_VIEW', 'DEVIATION_MANAGE'],
+    CEO: ['DASHBOARD', 'ADMIN_PANEL', 'PROJECT_CREATE', 'FINANCE_VIEW', 'DEVIATION_MANAGE'],
     CTO: ['DASHBOARD', 'DESIGN_MANAGE'],
     CDO: ['DASHBOARD', 'DESIGN_MANAGE'],
     COO: ['DASHBOARD', 'PROGRESS_UPDATE', 'DEVIATION_MANAGE'],

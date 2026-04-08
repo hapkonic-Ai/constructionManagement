@@ -26,10 +26,10 @@ const updateDesignSchema = z.object({
 });
 
 export async function GET(req: Request) {
-  const auth = await requireRoles(['SA', 'CEO', 'CTO', 'CDO']);
+  const auth = await requireRoles(['SA', 'CEO', 'CTO', 'CDO', 'COO', 'CMO', 'CFO']);
   if (!auth.ok) return auth.response;
 
-  const feature = await requireFeature(auth.user, 'DESIGN_MANAGE');
+  const feature = await requireFeature(auth.user, 'DASHBOARD');
   if (!feature.ok) return feature.response;
 
   // Optional filtering by project for role workbenches.
